@@ -123,7 +123,9 @@ function setupExtraNetworksForTab(tabname) {
             align-items: center;
             flex-direction: row;
             overflow: hidden;
+            min-height: 4em;
             height: 4em;
+            max-height: 4em;
             width: 100%;
             background-position: 0.65em 0;
             background-repeat: no-repeat;
