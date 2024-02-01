@@ -26,6 +26,8 @@ function setupExtraNetworksForTab(tabname) {
     var refresh = gradioApp().getElementById(tabname + '_extra_refresh');
     var showDirsDiv = gradioApp().getElementById(tabname + '_extra_show_dirs');
     var showDirs = gradioApp().querySelector('#' + tabname + '_extra_show_dirs input');
+    var showAsListDiv = gradioApp().getElementById(tabname + '_show_as_list');
+    var showAsList = gradioApp().querySelector('#' + tabname + '_show_as_list input');
     var promptContainer = gradioApp().querySelector('.prompt-container-compact#' + tabname + '_prompt_container');
     var negativePrompt = gradioApp().querySelector('#' + tabname + '_neg_prompt');
 
@@ -34,6 +36,7 @@ function setupExtraNetworksForTab(tabname) {
     tabs.appendChild(sortOrder);
     tabs.appendChild(refresh);
     tabs.appendChild(showDirsDiv);
+    tabs.appendChild(showAsListDiv);
 
     var applyFilter = function() {
         var searchTerm = search.value.toLowerCase();
@@ -100,6 +103,73 @@ function setupExtraNetworksForTab(tabname) {
 
     extraNetworksApplySort[tabname] = applySort;
     extraNetworksApplyFilter[tabname] = applyFilter;
+
+    var showAsListStorageKey = 'extra-networks-show-as-list';
+    var showAsListUpdate = function() {
+        // language=SCSS
+        var css = `
+        #${tabname}_extra_tabs .extra-network-cards {
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            padding: 0 0.5em;
+        }
+        #${tabname}_extra_tabs .extra-network-cards > .card {
+            display: flex;
+            position: relative;
+            justify-content: flex-start;
+            align-items: center;
+            flex-direction: row;
+            overflow: hidden;
+            height: 4em;
+            width: 100%;
+            background-position: 0.65em 0;
+            background-repeat: no-repeat;
+            background-size: contain;
+            margin: 0.5em 0;
+        }
+        #${tabname}_extra_tabs .extra-network-cards > .card > img.preview {
+            position: relative;
+            height: 100%;
+            width: 4em;
+            object-fit: contain;
+        }
+        #${tabname}_extra_tabs .extra-network-cards > .card > img.preview + .button-row + .actions {
+            margin-left: 0;
+        }
+        #${tabname}_extra_tabs .extra-network-cards > .card > .button-row {
+            position: absolute;
+            right: 1em;
+            top: 0;
+            width: auto;
+            height: 100%;
+            white-space: nowrap;
+        }
+        #${tabname}_extra_tabs .extra-network-cards > .card > .actions {
+            position: relative;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-direction: column;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+            box-shadow: none;
+            margin-left: 4em;
+        }
+        #${tabname}_extra_tabs .extra-network-cards > .card > .actions > .description {
+            white-space: nowrap;
+        }
+        `;
+        toggleCss(tabname + '_extra_show_as_list_style', css, showAsList.checked);
+        localSet(showAsListStorageKey, showAsList.checked ? 1 : 0);
+    };
+    showAsList.checked = localGet(showAsListStorageKey, 1) == 1;
+    showAsList.addEventListener("change", showAsListUpdate);
+    showAsListUpdate();
 
     var showDirsUpdate = function() {
         var css = '#' + tabname + '_extra_tabs .extra-network-subdirs { display: none; }';
